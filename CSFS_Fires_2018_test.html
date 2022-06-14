@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Carrier Sekani Wildfires TEST</title>
+<title>Carrier Sekani Wildfires</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
@@ -211,6 +211,13 @@ a {
 		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
 	}
 
+	.close {
+		float: right;
+		display: inline-block;
+		padding-right: 5px;
+		background: #ccc;
+	}
+
 	.legend label,
 	.legend span {
   	display:block;
@@ -282,7 +289,7 @@ a {
 <div class='map-overlay4' id='features4'><p style="color:#ffffff">
 	<div class='session' id='sliderbar'>
 		<h2>Date: <label id='active-date'>04/26/2018</label></h2>
-		<input id='slider' class='row' type='range' min='1' max='39' step='1' value='1'/>
+		<input id='slider' class='row' type='range' min='1' max='37' step='1' value='1'/>
 </div>
 <div class='session'>
   <h2>PM2.5 Air Pollution Level</h2>
@@ -310,6 +317,7 @@ a {
 
 
 <div class='map-overlay6' id='features6'><p style="color:#ffffff">
+	<button class="close" onclick="document.getElementById('features6').style.display='none'">Close</button>
 	<H1 id="CommunityTitle"></H1>
 	<img id="BurnsLakeGraph" src="https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/graphs/Burns_Lake.png" alt="Burns Lake 2018" style="width:508px;height:302px">
 	<img id="WetsuwetenGraph" src="https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/graphs/Wetsuweten.png" alt="Wet'suwet'en 2018" style="width:508px;height:302px">
@@ -337,12 +345,12 @@ a {
 <script>
 
 //Access token for Camp Lab Mapbox account
-mapboxgl.accessToken = 'pk.eyJ1IjoiZnJhbmNvY3Jvc3NvMTMiLCJhIjoiY2wwaHIxc2FqMGJhczNqcWhjcmc5dng0NSJ9.IYMY8BJX7JNcbPcebCJsOg';
+mapboxgl.accessToken = 'pk.eyJ1IjoiY2FtcGxhYiIsImEiOiJjbDRlZnhtMncwMzdkM2p1aDRqa2Y4dWY0In0.NMb7ANZ6AAQuOFllj5TfKg';
 
 // centred on CSFS Territory
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/francocrosso13/cl1nyqi3v00ah14nws3mxb6kf',
+    style: 'mapbox://styles/camplab/cl48o3gav000c14oefi3t76yj',
     zoom: 6.47,
     center: [-125.508, 55.250],
     minZoom: 4
@@ -358,29 +366,29 @@ const DateStartDisplay = document.getElementById("DateStart");
 const DateOutDisplay = document.getElementById('DateOut');
 
   //air quality data loaded in several polygons
-	map.on('load', () => {
-	map.addSource('PM25_Data', {
-		'type': 'geojson',
-		'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/data/airqualitydata/csfs_2018_pollution.geojson"
-	});
-	map.addLayer({
-		'id': 'PM25_2018',
-		'type': 'fill',
-		'source': 'PM25_Data', // reference the data source
-		'layout': {},
-		'paint': {
-			'fill-color': {
-				property: 'Pollution_Level',
-				stops: [[1, '#00B050'], [2, '#FFC000'],[3, '#FF9900'], [4, '#FF0000'],[5, '#7030A0'], [6, '#660066']] //colour scheme matches WHO air pollution  index
-			},
-			'fill-opacity': 0.25
+	//map.on('load', () => {
+	//map.addSource('PM25_Data', {
+		//'type': 'geojson',
+		//'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/data/airqualitydata/csfs_2018_pollution.geojson"
+	//});
+	//map.addLayer({
+		//'id': 'PM25_2018',
+		//'type': 'fill',
+		//'source': 'PM25_Data', // reference the data source
+		//'layout': {},
+		//'paint': {
+			//'fill-color': {
+				//property: 'Pollution_Level',
+				//stops: [[1, '#00B050'], [2, '#FFC000'],[3, '#FF9900'], [4, '#FF0000'],[5, '#7030A0'], [6, '#660066']] //colour scheme matches WHO air pollution  index
+			//},
+			//'fill-opacity': 0.25
 
-		},
-		filter:  ['==', ['number', ['get', 'Week_Number']], 1] //sets map to first week of fire season
-		});
-		map.moveLayer('PM25_2018', 'communities');
+		//},
+		//filter:  ['==', ['number', ['get', 'Week_Number']], 1] //sets map to first week of fire season
+		//});
+		//map.moveLayer('PM25_2018', 'communities');
 		//map.moveLayer('PM25_2018', 'sensors');
-	});
+	//});
 
   //load fire polygons for 2018 fire season
   map.on('load', () => {
@@ -405,21 +413,39 @@ const DateOutDisplay = document.getElementById('DateOut');
 	});
 
   //loads CSFS area boundary
+	//map.on('load', () => {
+  //map.addSource('CSFS_Border', {
+    //'type': 'geojson',
+    //'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/csfs_border.geojson"
+  //});
+	//map.addLayer({
+		//'id': 'CSFS',
+		//'type': 'line',
+		//'source': 'CSFS_Border', // reference the data source
+		//'layout': {},
+		//'paint': {
+			//'line-color': '#D22630',
+			//'line-width': 3
+		//}
+	//})
+	//});
+
+	//Load CSFS communities' 100 km buffer
 	map.on('load', () => {
-  map.addSource('CSFS_Border', {
-    'type': 'geojson',
-    'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/csfs_border.geojson"
-  });
-	map.addLayer({
-		'id': 'CSFS',
-		'type': 'line',
-		'source': 'CSFS_Border', // reference the data source
-		'layout': {},
-		'paint': {
-			'line-color': '#D22630',
-			'line-width': 3
-		}
-	})
+		map.addSource('CSFS_CommunityBuffer', {
+			'type': 'geojson',
+			'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Communities_100kmBuffer.geojson"
+		});
+		map.addLayer({
+			'id': 'communityBuffer',
+			'type': 'line',
+			'source': 'CSFS_CommunityBuffer',
+			'layout': {},
+			'paint': {
+				'line-color': '#D22630',
+				'line-width': 3
+			}
+		})
 	});
 
   //Place labels for large towns
@@ -498,25 +524,6 @@ map.addLayer({
 'circle-stroke-width': 2,
 'circle-color': '#45e87e',
 'circle-stroke-color': 'black'
-}
-});
-});
-
-map.on('load', () => {
-map.addSource('fire_points', {
-type: 'geojson',
-// Use a URL for the value for the `data` property.
-data: 'https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Merged_Fire_Hotspots.geojson'
-});
-
-map.addLayer({
-'id': 'fire_points_layer',
-'type': 'circle',
-'source': 'fire_points',
-'paint': {
-'circle-radius': 6,
-'circle-stroke-width': 0,
-'circle-color': '#FF0000'
 }
 });
 });
@@ -1126,6 +1133,27 @@ document.getElementById('fortbabine').addEventListener('click', () => {
 
 })
 
+//Fire Data/////////////////////////////////////////////////////////////////////
+//loads the point data of the air quality sensors
+map.on('load', () => {
+map.addSource('fire_points', {
+type: 'geojson',
+// Use a URL for the value for the `data` property.
+data: 'https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Merged_Fire_Hotspots.geojson'
+});
+
+map.addLayer({
+'id': 'fire_points_layer',
+'type': 'circle',
+'source': 'fire_points',
+'paint': {
+'circle-radius': 6,
+'circle-color': '#FF6347'},
+filter:  ['==', ['number', ['get', 'Week_Number']], 1] //set to first week of fire season
+});
+map.moveLayer('fire_points_layer', 'communities');
+});
+
 
 
 //DropDown Zooms
@@ -1327,12 +1355,6 @@ function weeks_dates(week) {
 		week_text = "12/16/2018"
 	} else if (week == 37) {
 		week_text = "12/23/2018"
-	} else if (week == 38) {
-		week_text = "12/30/2018"
-	} else if (week == 39) {
-		week_text = "1/6/2019"
-	} else if (week == 40) {
-		week_text = "1/13/2019"
 	}
 	return week_text
 };
@@ -1343,8 +1365,7 @@ document.getElementById('slider').addEventListener('input', (e) => {
 
 		var FireFilter=[
 		    "all",
-		    ['<=', ['number', ['get', 'Fire_Weeks_Week_Start']], week],
-		    ['>=', ['number', ['get', 'Fire_Weeks_Week_Out']], week]
+		    ['<=', ['number', ['get', 'Fire_Weeks_Week_Out']], week]
 		]
 
 		map.setFilter("Fires_CSFS", FireFilter)
@@ -1361,6 +1382,17 @@ document.getElementById('slider').addEventListener('input', (e) => {
 
 			map.setFilter("PM25_2018", PollutionFilter)
 		});
+
+    document.getElementById('slider').addEventListener('input', (e) => {
+  			const week3 = parseInt(e.target.value);
+
+  			var FirePointFilter=[
+  			    "all",
+  			    ['==', ['number', ['get', 'Week_Number']], week3]
+  			]
+
+  			map.setFilter("fire_points_layer", FirePointFilter)
+  		});
 
 	//Scale bar
 	const scale = new mapboxgl.ScaleControl({
