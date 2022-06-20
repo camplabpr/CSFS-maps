@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Carrier Sekani Wildfires</title>
+<title>Carrier Sekani Wildfires TEST main</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.7.0/mapbox-gl.js"></script>
@@ -252,6 +252,43 @@ a {
 	width: 15px;
 	}
 
+	#menu {
+		background: #fff;
+		position: absolute;
+		z-index: 1;
+		border-radius: 3px;
+		width: 300px;
+		border: 1px solid rgba(0,0,0,0.4);
+		font-family: "Open Sans", sans-serif;
+		right: 5px;
+		top: 500px;
+	}
+	#menu a {
+		font-size: 13px;
+		color: #404040;
+		display: block;
+		margin: 0;
+		padding: 0;
+		padding: 10px;
+		text-decoration: none;
+		border-bottom: 1px solid rgba(0,0,0,0.25);
+		text-align: center;
+	}
+	#menu a:last-child {
+		border: none;
+	}
+	#menu a:hover {
+		background-color:#f8f8f8;
+		color: #404040;
+	}
+	#menu a.active {
+		background-color: #3887be;
+		color: #ffffff;
+	}
+	#menu a.active:hover {
+		background: #3074a4;
+	}
+
 </style>
 
 <div id='map'></div>
@@ -288,7 +325,7 @@ a {
 
 <div class='map-overlay4' id='features4'><p style="color:#ffffff">
 	<div class='session' id='sliderbar'>
-		<h2>Date: <label id='active-date'>04/26/2018</label></h2>
+		<h2>Date: <label id='active-date'>04/15/2018</label></h2>
 		<input id='slider' class='row' type='range' min='1' max='37' step='1' value='1'/>
 </div>
 <div class='session'>
@@ -315,6 +352,10 @@ a {
   </div>
 </div>
 
+<div class='toggle layers'>
+	<h4>Click to toggle between different 100 km buffers</h4>
+	<nav id='menu'></nav>
+</div>
 
 <div class='map-overlay6' id='features6'><p style="color:#ffffff">
 	<button class="close" onclick="document.getElementById('features6').style.display='none'">Close</button>
@@ -348,10 +389,11 @@ a {
 mapboxgl.accessToken = 'pk.eyJ1IjoiY2FtcGxhYiIsImEiOiJjbDRlZnhtMncwMzdkM2p1aDRqa2Y4dWY0In0.NMb7ANZ6AAQuOFllj5TfKg';
 
 // centred on CSFS Territory
+// Mapbox style currently in use: "HLI-Exploratory-copy"
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/camplab/cl48o3gav000c14oefi3t76yj',
-    zoom: 6.47,
+    style: 'mapbox://styles/camplab/cl4g13hiz000b16o7cla42w3s',
+    zoom: 5.9,
     center: [-125.508, 55.250],
     minZoom: 4
     });
@@ -366,69 +408,67 @@ const DateStartDisplay = document.getElementById("DateStart");
 const DateOutDisplay = document.getElementById('DateOut');
 
   //air quality data loaded in several polygons
-	//map.on('load', () => {
-	//map.addSource('PM25_Data', {
-		//'type': 'geojson',
-		//'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/data/airqualitydata/csfs_2018_pollution.geojson"
-	//});
-	//map.addLayer({
-		//'id': 'PM25_2018',
-		//'type': 'fill',
-		//'source': 'PM25_Data', // reference the data source
-		//'layout': {},
-		//'paint': {
-			//'fill-color': {
-				//property: 'Pollution_Level',
-				//stops: [[1, '#00B050'], [2, '#FFC000'],[3, '#FF9900'], [4, '#FF0000'],[5, '#7030A0'], [6, '#660066']] //colour scheme matches WHO air pollution  index
-			//},
-			//'fill-opacity': 0.25
-
-		//},
-		//filter:  ['==', ['number', ['get', 'Week_Number']], 1] //sets map to first week of fire season
-		//});
-		//map.moveLayer('PM25_2018', 'communities');
-		//map.moveLayer('PM25_2018', 'sensors');
-	//});
-
-  //load fire polygons for 2018 fire season
-  map.on('load', () => {
-  map.addSource('Fires_Data', {
-    'type': 'geojson',
-    'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Fires_CSFS.geojson"
-  });
+	map.on('load', () => {
+	map.addSource('PM25_Data', {
+		'type': 'geojson',
+		'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/data/airqualitydata/CSFS_2018_PM25.geojson"
+	});
 	map.addLayer({
-		'id': 'Fires_CSFS',
+		'id': 'PM25_2018',
 		'type': 'fill',
-		'source': 'Fires_Data', // reference the data source
+		'source': 'PM25_Data', // reference the data source
 		'layout': {},
 		'paint': {
-			'fill-color': '#FF0000', // red color fill
-			'fill-opacity': 0.8,
-			'fill-outline-color': '#FF0000'
-
+			'fill-color': {
+				property: 'Pollution_Level',
+				stops: [[1, '#00B050'], [2, '#FFC000'],[3, '#FF9900'], [4, '#FF0000'],[5, '#7030A0'], [6, '#660066']]
+			},
+			'fill-opacity': 0.25,
+			'fill-outline-color': 'rgba(0,0,0,0)'
 		},
-		filter:  ['==', ['number', ['get', 'Fire_Weeks_Week_Start']], 1] //set to first week of fire season
+		filter: ['==', ['number', ['get', 'Week_Number']], 1] //set to first week of fire season
 		});
-		map.moveLayer('Fires_Data', 'communities');
 	});
 
-  //loads CSFS area boundary
-	//map.on('load', () => {
-  //map.addSource('CSFS_Border', {
+  //load fire polygons for 2018 fire season
+  //map.on('load', () => {
+  //map.addSource('Fires_Data', {
     //'type': 'geojson',
-    //'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/csfs_border.geojson"
+    //'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Fires_CSFS.geojson"
   //});
 	//map.addLayer({
-		//'id': 'CSFS',
-		//'type': 'line',
-		//'source': 'CSFS_Border', // reference the data source
+		//'id': 'Fires_CSFS',
+		//'type': 'fill',
+		//'source': 'Fires_Data', // reference the data source
 		//'layout': {},
 		//'paint': {
-			//'line-color': '#D22630',
-			//'line-width': 3
-		//}
-	//})
+			//'fill-color': '#FF0000', // red color fill
+			//'fill-opacity': 0.8,
+			//'fill-outline-color': '#FF0000'
+
+		//},
+		//filter:  ['==', ['number', ['get', 'Fire_Weeks_Week_Start']], 1] //set to first week of fire season
+		//});
+		//map.moveLayer('Fires_Data', 'communities');
 	//});
+
+  //loads CSFS area boundary
+	map.on('load', () => {
+  map.addSource('CSFS_Border', {
+    'type': 'geojson',
+    'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/csfs_border.geojson"
+  });
+	map.addLayer({
+		'id': 'CSFS',
+		'type': 'line',
+		'source': 'CSFS_Border', // reference the data source
+		'layout': {},
+		'paint': {
+			'line-color': '#302f2f',
+			'line-width': 0.5
+		}
+	})
+	});
 
 	//Load CSFS communities' 100 km buffer
 	map.on('load', () => {
@@ -437,12 +477,48 @@ const DateOutDisplay = document.getElementById('DateOut');
 			'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Communities_100kmBuffer.geojson"
 		});
 		map.addLayer({
-			'id': 'communityBuffer',
+			'id': 'CSFS Communities 100 km Buffer',
 			'type': 'line',
 			'source': 'CSFS_CommunityBuffer',
 			'layout': {},
 			'paint': {
-				'line-color': '#D22630',
+				'line-color': '#0000FF',
+				'line-width': 3
+			}
+		})
+	});
+
+	//Load CSSF communities' 100 km buffer + 100 km buffer around Prince George
+	map.on('load', () => {
+		map.addSource('CSFS_PG_Buffer', {
+			'type': 'geojson',
+			'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Communities_PG_Buffer.geojson"
+		});
+		map.addLayer({
+			'id': 'CSFS Communities + Prince George 100 km Buffer',
+			'type': 'line',
+			'source': 'CSFS_PG_Buffer',
+			'layout': {},
+			'paint': {
+				'line-color': '#ff0000',
+				'line-width': 3
+			}
+		})
+	});
+
+	//Load Carrier Sekani Tribal Council 100 km buffer
+	map.on('load', () => {
+		map.addSource('CSTC_Buffer', {
+			'type': 'geojson',
+			'data': "https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/CarrierSekani_Buffer.geojson"
+		});
+		map.addLayer({
+			'id': 'Carrier Sekani Tribal Council 100 km Buffer',
+			'type': 'line',
+			'source': 'CSTC_Buffer',
+			'layout': {},
+			'paint': {
+				'line-color': '#A020F0',
 				'line-width': 3
 			}
 		})
@@ -1144,17 +1220,53 @@ data: 'https://raw.githubusercontent.com/camplabpr/CSFS-maps/main/Merged_Fire_Ho
 
 map.addLayer({
 'id': 'fire_points_layer',
-'type': 'circle',
+'type': 'heatmap',
 'source': 'fire_points',
 'paint': {
-'circle-radius': 6,
-'circle-color': '#FF6347'},
+	// increase heatmap weight based on frequency & property magnitude
+	'heatmap-weight': [
+		'interpolate',
+		['linear'],
+		['get', 'mag'],
+		0,
+		0,
+		3,
+		1
+	],
+	// increase heatmap colour weight by zoom level (heatmap-intensity is a multiplier on top of heatmap-weight)
+	'heatmap-intensity': [
+		'interpolate',
+		['linear'],
+		['zoom'],
+		0,
+		1,
+		3,
+		2
+	],
+	'heatmap-color': [
+		'interpolate',
+		['linear'],
+		['heatmap-density'],
+		0,
+		'rgba(0,0,0,0)',
+		0.2,
+		'#ffa90a',
+		0.4,
+		'#ff570f',
+		0.6,
+		'#ff381a',
+		0.8,
+		'#e01e00',
+		1,
+		'#bf0800'
+	],
+	// adjust heatmap radius by zoom level
+	'heatmap-radius': 3
+},
 filter:  ['==', ['number', ['get', 'Week_Number']], 1] //set to first week of fire season
 });
 map.moveLayer('fire_points_layer', 'communities');
 });
-
-
 
 //DropDown Zooms
 	document.getElementById('burnslake').addEventListener('click', () => {
@@ -1393,6 +1505,60 @@ document.getElementById('slider').addEventListener('input', (e) => {
 
   			map.setFilter("fire_points_layer", FirePointFilter)
   		});
+
+	//Toggle buffers
+	map.on('idle', () => {
+		//If these three layers were not added to the map, abort
+		if (!map.getLayer('CSFS Communities 100 km Buffer') || !map.getLayer('CSFS Communities + Prince George 100 km Buffer') || !map.getLayer('Carrier Sekani Tribal Council 100 km Buffer')) {
+			return;
+		}
+
+		//Enumerate ids of the layers
+		const toggleableLayerIds = ['CSFS Communities 100 km Buffer', 'CSFS Communities + Prince George 100 km Buffer', 'Carrier Sekani Tribal Council 100 km Buffer'];
+
+		//Set up corresponding toggle button for each layer
+		for (const id of toggleableLayerIds) {
+			//Skip layers that already have a button set up
+			if (document.getElementById(id)) {
+				continue;
+			}
+
+			//Create a link
+			const link = document.createElement('a');
+			link.id = id;
+			link.href = '#';
+			link.textContent = id;
+			link.className = 'active';
+
+			//Show or hide layer when toggle is clicked
+			link.onclick = function (e) {
+				const clickedLayer = this.textContent;
+				e.preventDefault();
+				e.stopPropagation();
+
+				const visibility = map.getLayoutProperty(
+					clickedLayer,
+					'visibility'
+				);
+
+				//Toggle layer visibility by changing the layout object's visibility property
+				if (visibility === 'visible') {
+					map.setLayoutProperty(clickedLayer, 'visibility', 'none');
+					this.className = '';
+				} else {
+					this.className = 'active';
+					map.setLayoutProperty(
+						clickedLayer,
+						'visibility',
+						'visible'
+					);
+				}
+			};
+
+			const layers = document.getElementById('menu');
+			layers.appendChild(link);
+		}
+	});
 
 	//Scale bar
 	const scale = new mapboxgl.ScaleControl({
